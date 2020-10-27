@@ -22,6 +22,12 @@ public class PacketManager {
     public void fileReconstructor(){}
 
     //checks the type and assigns it as an object accordingly
-    //true for data false for header
-    public boolean determineType(){return false;}
+    public boolean headerOrData(packet){
+        boolean header = false;
+        DataPacketStructure dataPacket = new DataPacketStructure(packet);
+        if (dataPacket.getStatus%2 == 0) {
+            header = true;
+        }
+        return header;
+    }
 }
