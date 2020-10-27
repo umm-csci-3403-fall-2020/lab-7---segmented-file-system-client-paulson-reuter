@@ -10,7 +10,8 @@ public class PacketManager {
     public boolean allPackagesReceived(){return false;}
 
     //Sort by file ID into 3 different ArrayLists
-    //use switch to create/sort by file ID
+    //Take advice from Nic and use a map because then you do not have to worry about 
+    // having many if statements and it can just take the fileID as an input and it will find the correct bucket to put the data into.
     public void sortFileID(){}
 
     //constructs packet numbers for all data packets
@@ -22,10 +23,10 @@ public class PacketManager {
     public void fileReconstructor(){}
 
     //checks the type and assigns it as an object accordingly
-    public boolean headerOrData(packet){
+    public boolean determineType(packet) {
         boolean header = false;
-        DataPacketStructure dataPacket = new DataPacketStructure(packet);
-        if (dataPacket.getStatus%2 == 0) {
+        PacketStructure packet = new PacketStructure(packet);
+        if (packet.getStatus%2 == 0) {
             header = true;
         }
         return header;
