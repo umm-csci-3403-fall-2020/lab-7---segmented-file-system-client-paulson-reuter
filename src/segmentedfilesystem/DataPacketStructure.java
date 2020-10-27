@@ -16,4 +16,14 @@ public class DataPacketStructure {
         int length = packet.getLength();
         data = Arrays.copyOfRange(packet.getData(),4, length);
     }
+
+    public Byte getStatus (Byte packet) {
+        this.status = packet;
+        return status;
+    }
+    
+    public Byte getFileID (Byte packet) {
+        this.ID = packet;
+        return ID;
+    }
 }
