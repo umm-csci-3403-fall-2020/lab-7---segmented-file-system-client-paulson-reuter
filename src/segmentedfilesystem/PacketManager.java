@@ -1,18 +1,44 @@
 package segmentedfilesystem;
 
+import java.net.DatagramPacket;
+import java.util.ArrayList;
+import java.util.HashMap;
+
 public class PacketManager {
-    //buffer is 1024 bits
 
     //checks if all packets have been received by checking "Last Packet" bit
     //checks every packet until last packet is found
     //checks it's packet number and compares it to the counter associated with
     //one of the three files
-    public boolean allPackagesReceived(){return false;}
+    public boolean allPackagesReceived(DatagramPacket packet){return false;}
 
-    //Sort by file ID into 3 different ArrayLists
-    //Take advice from Nic and use a map because then you do not have to worry about 
-    // having many if statements and it can just take the fileID as an input and it will find the correct bucket to put the data into.
-    public void sortFileID(){}
+    //sticks packet into hashmap using uniqueID + random letter on end to create unique keys
+    public void store(PacketStructure packet, HashMap ourGuy){
+        int ID = packet.getID();
+        int dex = 0;
+        String IDstring = Integer.toString(ID);
+        String[] toAdd = {"a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z"};
+
+        String key = keyMaker(ID,ourGuy,dex,toAdd,IDstring);
+        ourGuy.put(key,packet);
+    }
+
+    //recursively makes keys until one is created that isn't in the hashmap
+    private String keyMaker(int uniqueID, HashMap ourGuy, int index, String[] add, String IDasString){
+        String finalID = " ";
+        if(index == add.length - 1){
+            index = 0;
+        }
+
+        finalID = IDasString + add[index];
+
+        if(ourGuy.containsKey(finalID)){
+            keyMaker(uniqueID,ourGuy, index++,add,IDasString);
+        }
+
+        return finalID;
+    }
+
 
     //constructs packet numbers for all data packets
     public int constructPacketNum(){return 0;}
@@ -23,10 +49,10 @@ public class PacketManager {
     public void fileReconstructor(){}
 
     //checks the type and assigns it as an object accordingly
-    public boolean determineType(packet) {
+    //true for data false for header
+    public boolean determineType(DatagramPacket packet){
         boolean header = false;
-        PacketStructure packet = new PacketStructure(packet);
-        if (packet.getStatus%2 == 0) {
+        if (packet.getData()[0]%2 == 0) {
             header = true;
         }
         return header;

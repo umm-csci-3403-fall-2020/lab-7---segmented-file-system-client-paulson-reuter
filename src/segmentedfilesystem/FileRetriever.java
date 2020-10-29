@@ -2,11 +2,13 @@ package segmentedfilesystem;
 import java.net.*;
 import java.io.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class FileRetriever {
 	private String server;
 	private int port;
 
+	PacketManager manager = new PacketManager();
 	public FileRetriever(String s, int p) {
 		server = s;
 		port = p;
@@ -20,13 +22,15 @@ public class FileRetriever {
 		DatagramPacket packet = new DatagramPacket(buf, buf.length, address, port);
 		socket.send(packet);
 
-		ArrayList<PacketStructure> file1 = new ArrayList<>();
-		ArrayList<PacketStructure> file2 = new ArrayList<>();
-		ArrayList<PacketStructure> file3 = new ArrayList<>();
+		HashMap<String,PacketStructure> packetChest = new HashMap<>();
 		packet = new DatagramPacket(buf, buf.length);
-		while(!allPackagesRecieved(socket.receive(packet))){
+
+		//generate array of numbers 0-9, create key, check if its already in the hashmap, if true remake key, check until key isn't in hashmap
+		while(manager.allPackagesReceived(packet)){
+			socket.receive(packet);
 			PacketStructure copy = new PacketStructure(packet);
-			sortFileID(copy,file1,file2,file3);
+			manager.store(copy,packetChest);
+
 		}
 	}
 
