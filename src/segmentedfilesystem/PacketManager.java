@@ -41,7 +41,13 @@ public class PacketManager {
 
 
     //constructs packet numbers for all data packets
-    public int constructPacketNum(){return 0;}
+    public int constructPacketNum(PacketStructure packet){
+        byte[]  pnumber = packet.getPNumber();
+        int x = Byte.toUnsignedInt(pnumber[0]);
+        int y = Byte.toUnsignedInt(pnumber[1]);
+        int result = 256*x + y;
+        return result;
+    }
 
     //takes all three ArrayLists and sorts in
     //get file name from header to use for data

@@ -27,7 +27,7 @@ public class PacketStructure {
 
     public byte getID(){return ID;}
 
-    public byte[] getPnumber(){return pnumber;}
+    public byte[] getPNumber(){return pnumber;}
 
     public byte[] getData() {return data;}
 }
