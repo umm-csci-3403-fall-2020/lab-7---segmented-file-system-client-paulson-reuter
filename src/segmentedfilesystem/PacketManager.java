@@ -54,13 +54,19 @@ public class PacketManager {
     //grab data from data packets
     public void fileReconstructor(){}
 
-    //checks the type and assigns it as an object accordingly
-    //true for data false for header
-    public boolean determineType(DatagramPacket packet){
-        boolean header = false;
+    public boolean isHeaderPacket(DatagramPacket packet){
         if (packet.getData()[0]%2 == 0) {
-            header = true;
+            return true;
         }
-        return header;
+        return false;
+    }
+
+    public boolean isLastPacket(DatagramPacket packet){
+        if(!isHeaderPacket(packet)){
+            if(packet.getData()[0]%4 == 3){
+                return true;
+            }
+        }
+        return false;
     }
 }
