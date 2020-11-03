@@ -14,9 +14,6 @@ public class PacketManager {
     private int file2ID;
     private int file3ID;
     private HashMap<String,PacketStructure> theGuy;
-    public File file1;
-    public File file2;
-    public File file3;
 
     //checks if all packets have been received by checking "Last Packet" bit
     //saves all three last packets, and compares them to counters associated with
@@ -82,31 +79,8 @@ public class PacketManager {
         return status;
     }//end
 
-    //sticks packet into hashmap using uniqueID + random letter on end to create unique keys
+    //sticks packet into 1 of 3 hashmaps and used packetnum as key if datapacket and fileid as key if headerpacket
     public void store(PacketStructure packet){
-        int ID = packet.getID();
-        int dex = 0;
-        String IDstring = Integer.toString(ID);
-        String[] toAdd = {"a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z"};
-
-        String key = keyMaker(ID,dex,toAdd,IDstring);
-        theGuy.put(key,packet);
-    }
-
-    //recursively makes keys until one is created that isn't in the hashmap
-    private String keyMaker(int uniqueID, int index, String[] add, String IDasString){
-        String finalID = " ";
-        if(index == add.length - 1){
-            index = 0;
-        }
-
-        finalID = IDasString + add[index];
-
-        if(theGuy.containsKey(finalID)){
-            keyMaker(uniqueID,index++,add,IDasString);
-        }
-
-        return finalID;
     }
 
 
@@ -120,12 +94,11 @@ public class PacketManager {
 
 
     public void fileGenerator() throws IOException {
-        file1 = fileCreator(file1ID);
-        file2 = fileCreator(file2ID);
-        file3 = fileCreator(file3ID);
+        String file1 = fileCreator(file1ID);
+        String file2 = fileCreator(file2ID);
+        String file3 = fileCreator(file3ID);
 
         FileOutputStream fos1 = new FileOutputStream(file1);
-        DataOutputStream dos1 = new DataOutputStream(fos1);
         int index = 0;
         int packetnum;
 
@@ -139,7 +112,7 @@ public class PacketManager {
                     packetnum = constructPacketNum(data);
                     if (packetnum == index) {
                         //this is to make sure it writes in order from packet 0 to ...
-                        dos1.write(data.getData());
+                        fos1.write(data.getData());
                         index++;
                     }
                 }
@@ -147,7 +120,6 @@ public class PacketManager {
         }//now just do this two more times
 
         FileOutputStream fos2 = new FileOutputStream(file2);
-        DataOutputStream dos2 = new DataOutputStream(fos2);
         index = 0;
 
         while(index != file2Total) {
@@ -160,7 +132,7 @@ public class PacketManager {
                     packetnum = constructPacketNum(data);
                     if (packetnum == index) {
                         //this is to make sure it writes in order from packet 0 to ...
-                        dos2.write(data.getData());
+                        fos2.write(data.getData());
                         index++;
                     }
                 }
@@ -168,7 +140,7 @@ public class PacketManager {
         }
 
         FileOutputStream fos3 = new FileOutputStream(file3);
-        DataOutputStream dos3 = new DataOutputStream(fos3);
+	index = 0;
 
         while(index != file3Total) {
             //loops until all of file1's packets have been written to the file
@@ -180,7 +152,7 @@ public class PacketManager {
                     packetnum = constructPacketNum(data);
                     if (packetnum == index) {
                         //this is to make sure it writes in order from packet 0 to ...
-                        dos3.write(data.getData());
+                        fos3.write(data.getData());
                         index++;
                     }
                 }
@@ -189,20 +161,19 @@ public class PacketManager {
 
     }
 
-    private File fileCreator(int fileID){
+    private String fileCreator(int fileID){
         String name = " ";
 
         for( String key : theGuy.keySet()){
             PacketStructure data = theGuy.get(key);
             if(data.getID() == fileID) {
                 //only checks packets that have given ID so we only find one header packet
-                if (data.getPnumber()[0] == -1) {
+                if (data.getStatus()%2 == 0) {
                     name = new String(data.getData(), 0, data.getData().length);
                 }
             }
         }
-        File thefile = new File(name);
-        return thefile;
+        return name;
     }
 
     //checks the type and assigns it as an object accordingly

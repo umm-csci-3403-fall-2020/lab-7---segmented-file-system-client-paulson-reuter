@@ -5,7 +5,7 @@ import java.util.Arrays;
 public class PacketStructure {
     private byte status;
     private byte ID;
-    private byte[] pnumber;
+    private byte[] pnumber = new byte[2];
     private byte[] data;
 
     PacketManager manager = new PacketManager();
@@ -15,7 +15,6 @@ public class PacketStructure {
         int length = packet.getLength();
         if(manager.determineType(packet)) {
             data = Arrays.copyOfRange(packet.getData(),2,length);
-            pnumber[0] = -1;
         }
         else{
             pnumber[0] = packet.getData()[2];
@@ -32,11 +31,11 @@ public class PacketStructure {
 
     public byte[] getData() {return data;}
     
-    public ArrayList<Byte> getPacketData() {
-        ArrayList<Byte> outputBytes = new ArrayList<>();
-        for (int i = 0; i < dataBufferLength; i++) {
-            outputBytes.add(data[i]);
-        }
-        return outputBytes;
-    }
+//   public ArrayList<Byte> getPacketData() {
+//        ArrayList<Byte> outputBytes = new ArrayList<>();
+ //       for (int i = 0; i < dataBufferLength; i++) {
+  //          outputBytes.add(data[i]);
+    //    }
+      //  return outputBytes;
+  //  }
 }

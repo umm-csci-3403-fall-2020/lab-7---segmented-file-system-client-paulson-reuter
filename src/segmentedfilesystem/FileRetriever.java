@@ -17,7 +17,7 @@ public class FileRetriever {
 		DatagramSocket socket = new DatagramSocket();
 		byte[] buf = new byte[1028];
 		InetAddress address = InetAddress.getByName(server);
-		DatagramPacket packet = new DatagramPacket(buf, buf.length, address, port);
+		DatagramPacket packet = new DatagramPacket(buf, buf.length,address,port);
 		socket.send(packet);
 
 		packet = new DatagramPacket(buf, buf.length);
