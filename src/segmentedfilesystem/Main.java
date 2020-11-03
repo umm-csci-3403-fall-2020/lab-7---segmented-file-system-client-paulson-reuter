@@ -22,6 +22,9 @@ public class Main {
 
         FileRetriever fileRetriever = new FileRetriever(server, port);
         fileRetriever.downloadFiles();
+        
+        PacketManager manager = new PacketManager();
+        manager.fileGenerator();
     }
 
 }
