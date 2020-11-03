@@ -10,45 +10,43 @@ public class File {
     PacketStructure lastPacket;
     String filename;
     Integer numPackets;
-
-
+    int fileID;
     HashMap<Integer, PacketStructure> datapackets = new HashMap<>();
 
-    public void write() {
-        System.out.println("Writing file" + filename);
-
-        ArrayList<Byte> outputBuffer = new ArrayList<>();
-
-        // Add all datapackets to the outputBuffer
-        for (int i = 0; i < numPackets; i++) {
-            outputBuffer.addAll(datapackets.get(i).getPacketData());
-        }
-
-        // Create ByteArray to be able to later write the array to the FileOutputStream
-        byte[] ByteArray = new byte[outputBuffer.size()];
-        for (int i = 0; i < numPackets; i++) {
-            ByteArray[i] = (byte) outputBuffer.get(i);
-        }
-
-        try {
-            FileOutputStream file = new FileOutputStream(filename);
-            file.write(ByteArray);
-        } catch (IOException e) {
-            System.err.println("Error attempting to write file" + filename);
-            System.err.println(e);
-        }
-    }
-    
     public void add(PacketStructure packet) {
-        // packet.constructPacketNum();
-        // datapackets.put(packet.,packet);
-        // if (packet.lastPacket){
-        //   numPackets = numPackets + 1;
-        //   lastPacket = packet;
-        // }
-        if (fileComplete()){
-          write();
+        //checks to update variables
+        if(datapackets.isEmpty()) {
+            fileID = Byte.toUnsignedInt(packet.getID());
         }
+        if (isLastPacket(packet)) {
+            lastPacket = packet;
+            numPackets = constructPacketNum(packet) + 1;
+        }
+        if (isHeader(packet)) {
+            headerPacket = packet;
+            filename = new String(packet.getData(), 0, packet.getData().length);
+            datapackets.put(Byte.toUnsignedInt(packet.getID()),packet);
+        }
+        else {
+            datapackets.put(constructPacketNum(packet),packet);
+        }
+
+    }
+
+    private boolean isHeader(PacketStructure packet){
+        boolean header = false;
+        if ((packet.getID() % 2) == 0) {
+            header = true;
+        }
+        return header;
+    }
+
+    private boolean isLastPacket(PacketStructure packet){
+        boolean last = false;
+        if((packet.getStatus() % 4) == 3){
+            last = true;
+        }
+        return last;
     }
 
     public boolean fileComplete() {
@@ -56,5 +54,11 @@ public class File {
         return false;
         }
         return numPackets.equals(datapackets.size()) && headerPacket != null;
+    }
+
+    private int constructPacketNum(PacketStructure packet){
+        int x = Byte.toUnsignedInt(packet.getPnumber()[0]);
+        int y = Byte.toUnsignedInt(packet.getPnumber()[1]);
+        return x*10+y;
     }
 }

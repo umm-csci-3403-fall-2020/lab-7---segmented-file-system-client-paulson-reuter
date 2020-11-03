@@ -23,6 +23,14 @@ public class PacketStructure {
         }
     }
 
+    private boolean determineType(DatagramPacket packet){
+        boolean header = false;
+        if (packet.getData()[0]%2 == 0) {
+            header = true;
+        }
+        return header;
+    }
+
     public byte getStatus(){return status;}
 
     public byte getID(){return ID;}
