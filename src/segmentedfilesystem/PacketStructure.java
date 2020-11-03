@@ -13,7 +13,7 @@ public class PacketStructure {
         status = packet.getData()[0];
         ID = packet.getData()[1];
         int length = packet.getLength();
-        if(manager.determineType(packet)) {
+        if(determineType(packet)) {
             data = Arrays.copyOfRange(packet.getData(),2,length);
         }
         else{
@@ -39,11 +39,4 @@ public class PacketStructure {
 
     public byte[] getData() {return data;}
     
-//   public ArrayList<Byte> getPacketData() {
-//        ArrayList<Byte> outputBytes = new ArrayList<>();
- //       for (int i = 0; i < dataBufferLength; i++) {
-  //          outputBytes.add(data[i]);
-    //    }
-      //  return outputBytes;
-  //  }
 }

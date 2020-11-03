@@ -9,7 +9,7 @@ public class File {
     PacketStructure headerPacket;
     PacketStructure lastPacket;
     String filename;
-    Integer numPackets;
+    Integer numPackets = -1;
     int fileID;
     HashMap<Integer, PacketStructure> datapackets = new HashMap<>();
 
@@ -17,25 +17,31 @@ public class File {
         //checks to update variables
         if(datapackets.isEmpty()) {
             fileID = Byte.toUnsignedInt(packet.getID());
+	    System.out.println("First packet added");
         }
+
         if (isLastPacket(packet)) {
             lastPacket = packet;
             numPackets = constructPacketNum(packet) + 1;
+	    datapackets.put(constructPacketNum(packet),packet);
+	    System.out.println("Last packet added");
         }
-        if (isHeader(packet)) {
+        else if (isHeader(packet)) {
             headerPacket = packet;
             filename = new String(packet.getData(), 0, packet.getData().length);
             datapackets.put(Byte.toUnsignedInt(packet.getID()),packet);
+	    System.out.println("Header packet added");
         }
         else {
             datapackets.put(constructPacketNum(packet),packet);
+	    System.out.println("Packet added");
         }
 
     }
 
     private boolean isHeader(PacketStructure packet){
         boolean header = false;
-        if ((packet.getID() % 2) == 0) {
+        if ((packet.getStatus() % 2) == 0) {
             header = true;
         }
         return header;
@@ -50,15 +56,16 @@ public class File {
     }
 
     public boolean fileComplete() {
-        if(numPackets == null){
-        return false;
-        }
-        return numPackets.equals(datapackets.size()) && headerPacket != null;
+    	boolean complete = false;
+        if(numPackets == datapackets.size()){
+	complete = true;
+	}
+	return complete;
     }
 
     private int constructPacketNum(PacketStructure packet){
         int x = Byte.toUnsignedInt(packet.getPnumber()[0]);
         int y = Byte.toUnsignedInt(packet.getPnumber()[1]);
-        return x*10+y;
+        return x*256+y;
     }
 }

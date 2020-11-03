@@ -21,17 +21,15 @@ public class FileRetriever {
 		socket.send(packet);
 
 		packet = new DatagramPacket(buf, buf.length);
-
-		boolean loop = true;
-		while(loop){
+		while(!manager.allPackagesReceived()){
+			System.out.println("Downloading...");
 			socket.receive(packet);
 			PacketStructure copy = new PacketStructure(packet);
 			manager.store(copy);
-
-			if(manager.allPackagesReceived(copy)){
-				loop = false;
-			}
+			
 		}
+		System.out.println("Finished Downloading. Closing server.");
+		socket.close();
 	}
 
 }
