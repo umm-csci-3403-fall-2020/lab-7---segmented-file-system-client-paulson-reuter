@@ -7,19 +7,20 @@ public class PacketStructure {
     private byte ID;
     private byte[] pnumber = new byte[2];
     private byte[] data;
+    private int length;
 
     PacketManager manager = new PacketManager();
     public PacketStructure(DatagramPacket packet){
         status = packet.getData()[0];
         ID = packet.getData()[1];
-        int length = packet.getLength();
+        length = packet.getLength();
         if(determineType(packet)) {
-            data = Arrays.copyOfRange(packet.getData(),2,length);
+            data = packet.getData();
         }
         else{
             pnumber[0] = packet.getData()[2];
             pnumber[1] = packet.getData()[3];
-            data = Arrays.copyOfRange(packet.getData(), 4, length);
+            data = Arrays.copyOfRange(packet.getData(),4,packet.getData().length-4);
         }
     }
 
@@ -38,5 +39,7 @@ public class PacketStructure {
     public byte[] getPnumber(){return pnumber;}
 
     public byte[] getData() {return data;}
+
+    public int getLength() {return length;}
     
 }

@@ -22,14 +22,16 @@ public class FileRetriever {
 
 		packet = new DatagramPacket(buf, buf.length);
 		while(!manager.allPackagesReceived()){
-			System.out.println("Downloading...");
 			socket.receive(packet);
 			PacketStructure copy = new PacketStructure(packet);
 			manager.store(copy);
 			
 		}
-		System.out.println("Finished Downloading. Closing server.");
 		socket.close();
+	}
+
+	public void fileMaker() throws IOException{
+		manager.fileGenerator();
 	}
 
 }

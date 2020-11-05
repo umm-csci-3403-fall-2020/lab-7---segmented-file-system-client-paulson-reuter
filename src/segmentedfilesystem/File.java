@@ -8,7 +8,7 @@ import java.util.HashMap;
 public class File {
     PacketStructure headerPacket;
     PacketStructure lastPacket;
-    String filename;
+    String filename = "Empty";
     Integer numPackets = -1;
     int fileID;
     HashMap<Integer, PacketStructure> datapackets = new HashMap<>();
@@ -17,24 +17,19 @@ public class File {
         //checks to update variables
         if(datapackets.isEmpty()) {
             fileID = Byte.toUnsignedInt(packet.getID());
-	    System.out.println("First packet added");
         }
 
         if (isLastPacket(packet)) {
             lastPacket = packet;
             numPackets = constructPacketNum(packet) + 1;
 	    datapackets.put(constructPacketNum(packet),packet);
-	    System.out.println("Last packet added");
         }
         else if (isHeader(packet)) {
             headerPacket = packet;
-            filename = new String(packet.getData(), 0, packet.getData().length);
-            datapackets.put(Byte.toUnsignedInt(packet.getID()),packet);
-	    System.out.println("Header packet added");
+            filename = new String(packet.getData(),2,packet.getLength()-2);
         }
         else {
             datapackets.put(constructPacketNum(packet),packet);
-	    System.out.println("Packet added");
         }
 
     }
